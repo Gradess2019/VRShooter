@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Weapon.h"
 #include "PlayerPawn.generated.h"
 
 UCLASS()
@@ -13,16 +14,13 @@ class SHOOTER_API APlayerPawn : public APawn
 
 public:
 
-	APlayerPawn();
-
-protected:
-
-	void BeginPlay() override;
-
-public:
-
-	void Tick(float DeltaTime) override;
-
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void PostInitializeComponents() override;
+
+private:
+	
+	void FireLeft();
+	void FireRight();
 
 };
