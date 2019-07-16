@@ -2,3 +2,7 @@
 
 #include "Public/Weapon.h"
 
+void AWeapon::Fire()
+{
+	unimplemented();
+}
