@@ -17,12 +17,12 @@ class SHOOTER_API UWeaponFactory : public UObject
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Factory", meta = (KeyWords = "Weapon Factory Create Pistol"))
-	virtual UClass* CreatePistol();
+	virtual UClass* GetPistolClass();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Factory", meta = (KeyWords = "Weapon Factory Create Shield"))
-	virtual UClass* CreateShield();
+	virtual UClass* GetShieldClass();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Factory", meta = (KeyWords = "Weapon Factory Create Whip"))
-	virtual UClass* CreateWhip();
+	virtual UClass* GetWhipClass();
 
 };

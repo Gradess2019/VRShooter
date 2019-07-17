@@ -16,5 +16,5 @@ class SHOOTER_API UDefaultWeaponFactory : public UWeaponFactory
 
 public:
 
-	UClass* CreatePistol() override;
+	UClass* GetPistolClass() override;
 };

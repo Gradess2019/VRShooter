@@ -3,19 +3,19 @@
 
 #include "WeaponFactory.h"
 
-UClass* UWeaponFactory::CreatePistol()
+UClass* UWeaponFactory::GetPistolClass()
 {
 	unimplemented();
 	return nullptr;
 }
 
-UClass* UWeaponFactory::CreateShield()
+UClass* UWeaponFactory::GetShieldClass()
 {
 	unimplemented();
 	return nullptr;
 }
 
-UClass* UWeaponFactory::CreateWhip()
+UClass* UWeaponFactory::GetWhipClass()
 {
 	unimplemented();
 	return nullptr;
