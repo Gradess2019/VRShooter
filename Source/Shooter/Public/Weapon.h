@@ -3,22 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Components/StaticMeshComponent.h"
 #include "Weapon.generated.h"
 
-UCLASS(Abstract, BlueprintType, Blueprintable)
-class SHOOTER_API AWeapon : public AActor
+DECLARE_LOG_CATEGORY_EXTERN(WeaponLog, Log, All);
+
+/**
+ * Base weapon class
+ */
+UCLASS(Blueprintable, BlueprintType, Abstract)
+class SHOOTER_API UWeapon : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 
 public:
 
-	UFUNCTION()
-	virtual void Fire();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnFire();
 
-protected:
-
-	UPROPERTY(VisibleAnywhere, Category = "Weapon settings")
-	UStaticMeshComponent* mesh;
-
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnStopFire();
 };

@@ -1,8 +1,15 @@
 // Copyright EnterVR 2019
 
-#include "Public/Weapon.h"
+#include "Weapon.h"
 
-void AWeapon::Fire()
+DEFINE_LOG_CATEGORY(WeaponLog);
+
+void UWeapon::OnFire_Implementation()
+{
+	unimplemented();
+}
+
+void UWeapon::OnStopFire_Implementation()
 {
 	unimplemented();
 }
