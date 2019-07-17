@@ -12,6 +12,7 @@ class SHOOTER_API UPistol : public UWeapon
 	GENERATED_BODY()
 
 public:
+	UPistol();
 
 	void OnFire_Implementation() override;
 	void OnStopFire_Implementation() override;
