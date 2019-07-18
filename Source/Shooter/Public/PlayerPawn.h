@@ -31,10 +31,10 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn settings")
 	class UMotionControllerComponent* rightController;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn settings")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon Settings")
 	class UWeapon* rightWeapon;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn settings")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon Settings")
 	UWeapon* leftWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn settings")
@@ -44,24 +44,26 @@ private:
 
 	UPROPERTY()
 	UWeaponFactory* weaponFactory;
-	
+
 	void InitializeBaseComponents();
 
 	template<class T>
 	T* CreateComponent(const FName& COMPONENT_NAME, USceneComponent* parent);
-
 	USceneComponent* CreateComponent(const FName& COMPONENT_NAME, UClass* componentClass, USceneComponent* parent);
 	USceneComponent* CreateComponentAtRuntime(const FName& COMPONENT_NAME, UClass* componentClass, USceneComponent* parent);
+	UMotionControllerComponent* CreateMotionControllerComponent(const FName& COMPONENT_NAME, const EControllerHand& SOURCE);
 
-	void CheckFactoryClass();
+	UFUNCTION()
 	void InitializeFactory();
+
+	UFUNCTION()
 	void InitializeWeapon();
 
 	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-
 	FName GetPropertyName(FPropertyChangedEvent& PropertyChangedEvent);
 	bool IsWeaponFactoryClassProperty(const FName& PROPERTY_NAME) const;
 
+	void CheckFactoryClass();
 	void ChangeFactory();
 	void ChangeWeapon();
 
@@ -71,6 +73,7 @@ private:
 	UFUNCTION()
 	void BeginPlay() override;
 
+	UFUNCTION()
 	void FireLeft();
 	
 	UFUNCTION()

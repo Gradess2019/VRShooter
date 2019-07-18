@@ -16,13 +16,13 @@ DEFINE_LOG_CATEGORY(PlayerPawnLog);
 
 APlayerPawn::APlayerPawn(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	WARNING("Construction");
+	weaponFactoryClass = UDefaultWeaponFactory::StaticClass();
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
 	InitializeBaseComponents();
-
-	CheckFactoryClass();
 	InitializeFactory();
-
 	InitializeWeapon();
-	WARNING("Constructed");
 }
 
 void APlayerPawn::InitializeBaseComponents()
@@ -31,8 +31,8 @@ void APlayerPawn::InitializeBaseComponents()
 
 	VROrigin = CreateComponent<USceneComponent>("VROrigin", RootComponent);
 	cameraComponent = CreateComponent<UCameraComponent>("VRCamera", VROrigin);
-	leftController = CreateComponent<UMotionControllerComponent>("LeftMotionController", VROrigin);
-	rightController = CreateComponent<UMotionControllerComponent>("RightMotionController", VROrigin);
+	leftController = CreateMotionControllerComponent("LeftMotionController", EControllerHand::Left);
+	rightController = CreateMotionControllerComponent("RightMotionController", EControllerHand::Right);
 }
 
 template<class T>
@@ -53,7 +53,7 @@ USceneComponent* APlayerPawn::CreateComponent(const FName& COMPONENT_NAME, UClas
 		componentClass,
 		true,
 		false,
-		true
+		false
 	));
 	newComponent->SetupAttachment(parent);
 	return newComponent;
@@ -68,17 +68,11 @@ USceneComponent* APlayerPawn::CreateComponentAtRuntime(const FName& COMPONENT_NA
 	return newComponent;
 }
 
-void APlayerPawn::CheckFactoryClass()
+UMotionControllerComponent* APlayerPawn::CreateMotionControllerComponent(const FName& COMPONENT_NAME, const EControllerHand& SOURCE)
 {
-	if (weaponFactoryClass)
-	{
-		LOG("Factory class is valid");
-	}
-	else
-	{
-		WARNING("Factory class is null! DefaultWeaponFactory will be used.");
-		weaponFactoryClass = UDefaultWeaponFactory::StaticClass();
-	}
+	UMotionControllerComponent* newMotionController = CreateComponent<UMotionControllerComponent>(COMPONENT_NAME, VROrigin);
+	newMotionController->SetTrackingSource(SOURCE);
+	return newMotionController;
 }
 
 void APlayerPawn::InitializeFactory()
@@ -95,26 +89,23 @@ void APlayerPawn::InitializeFactory()
 
 void APlayerPawn::InitializeWeapon()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Factory is %s"), weaponFactory->IsA(UDefaultWeaponFactory::StaticClass()) ? *FString("Default") : *FString("Abstract"));
 	leftWeapon = Cast<UWeapon>(CreateComponent("LeftWeapon", weaponFactory->GetPistolClass(), leftController));
-	leftWeapon->RegisterComponent();
 	rightWeapon = Cast<UWeapon>(CreateComponent("RightWeapon", weaponFactory->GetPistolClass(), rightController));
-	rightWeapon->RegisterComponent();
-	UE_LOG(LogTemp, Warning, TEXT("Left weapon is %s"), leftWeapon->IsA(UPistol::StaticClass()) ? *FString("Pistol") : *FString("Abstract"));
 }
 
 void APlayerPawn::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	const FName PROPERTY_NAME = GetPropertyName(PropertyChangedEvent);
-	if (IsWeaponFactoryClassProperty(PROPERTY_NAME))
-	{
-		CheckFactoryClass();
-		ChangeFactory();
-		ChangeWeapon();
-	}
-	LOG("Property changed.");
+	// TODO
+	//const FName PROPERTY_NAME = GetPropertyName(PropertyChangedEvent);
+	//if (IsWeaponFactoryClassProperty(PROPERTY_NAME))
+	//{
+	//	CheckFactoryClass();
+	//	ChangeFactory();
+	//	ChangeWeapon();
+	//}
+	//LOG("Property changed.");
 }
 
 FName APlayerPawn::GetPropertyName(FPropertyChangedEvent& PropertyChangedEvent)
@@ -127,6 +118,19 @@ bool APlayerPawn::IsWeaponFactoryClassProperty(const FName& PROPERTY_NAME) const
 	return PROPERTY_NAME == GET_MEMBER_NAME_CHECKED(APlayerPawn, weaponFactoryClass);
 }
 
+void APlayerPawn::CheckFactoryClass()
+{
+	if (weaponFactoryClass)
+	{
+		LOG("Factory class is valid");
+	}
+	else
+	{
+		WARNING("Factory class is null! DefaultWeaponFactory will be used");
+		weaponFactoryClass = UDefaultWeaponFactory::StaticClass();
+	}
+}
+
 void APlayerPawn::ChangeFactory()
 {
 	weaponFactory = NewObject<UWeaponFactory>(this, weaponFactoryClass);
@@ -134,11 +138,20 @@ void APlayerPawn::ChangeFactory()
 
 void APlayerPawn::ChangeWeapon()
 {
-	leftWeapon = Cast<UWeapon>(CreateComponentAtRuntime(FName("LeftWeapon"), weaponFactory->GetPistolClass(), leftController));
-	leftWeapon->RegisterComponent();
+	if (IsValid(leftWeapon))
+	{
+		leftWeapon->DestroyComponent();
+		WARNING("Left Destroyed");
+	}
 
+	if (IsValid(rightWeapon))
+	{
+		rightWeapon->DestroyComponent();
+		WARNING("Right Destroyed");
+	}
+
+	leftWeapon = Cast<UWeapon>(CreateComponentAtRuntime(FName("LeftWeapon"), weaponFactory->GetPistolClass(), leftController));
 	rightWeapon = Cast<UWeapon>(CreateComponentAtRuntime(FName("RightWeapon"), weaponFactory->GetPistolClass(), rightController));
-	rightWeapon->RegisterComponent();
 }
 
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -167,7 +180,7 @@ void APlayerPawn::FireLeft()
 	}
 	else
 	{
-		WARNING("leftWeapon is nullptr!");
+		WARNING("leftWeapon is nullptr");
 	}
 }
 
@@ -179,7 +192,6 @@ void APlayerPawn::FireRight()
 	}
 	else
 	{
-		WARNING("rightWeapon is nullptr!");
+		WARNING("rightWeapon is nullptr");
 	}
 }
-
