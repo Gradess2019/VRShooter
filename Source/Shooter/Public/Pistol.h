@@ -14,6 +14,12 @@ class SHOOTER_API UPistol : public UWeapon
 public:
 	UPistol();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<class ABullet> bulletClass;
+
 	void OnFire_Implementation() override;
 	void OnStopFire_Implementation() override;
+
+	void SpawnBullet();
+
 };
