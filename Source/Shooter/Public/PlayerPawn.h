@@ -20,22 +20,22 @@ public:
 protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn settings")
-	USceneComponent* VROrigin;
+	TWeakObjectPtr<USceneComponent> VROrigin;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly,Category = "Pawn settings")
-	class UCameraComponent* cameraComponent;
+	TWeakObjectPtr<class UCameraComponent> cameraComponent;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn settings")
-	class UMotionControllerComponent* leftController;
+	TWeakObjectPtr<class UMotionControllerComponent> leftController;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn settings")
-	class UMotionControllerComponent* rightController;
+	TWeakObjectPtr<UMotionControllerComponent> rightController;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon Settings")
-	class UWeapon* rightWeapon;
+	TWeakObjectPtr<class UWeapon> rightWeapon;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon Settings")
-	UWeapon* leftWeapon;
+	TWeakObjectPtr<UWeapon> leftWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn settings")
 	TSubclassOf<class UWeaponFactory> weaponFactoryClass;
@@ -43,7 +43,7 @@ protected:
 private:
 
 	UPROPERTY()
-	UWeaponFactory* weaponFactory;
+	TWeakObjectPtr<UWeaponFactory> weaponFactory;
 
 	void InitializeBaseComponents();
 
@@ -56,6 +56,7 @@ private:
 	void InitializeFactory();
 	void InitializeWeapon();
 
+	// TODO
 	//void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	FName GetPropertyName(FPropertyChangedEvent& PropertyChangedEvent);
 	bool IsWeaponFactoryClassProperty(const FName& PROPERTY_NAME) const;
