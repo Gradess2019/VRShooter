@@ -53,13 +53,10 @@ private:
 	USceneComponent* CreateComponentAtRuntime(const FName& COMPONENT_NAME, UClass* componentClass, USceneComponent* parent);
 	UMotionControllerComponent* CreateMotionControllerComponent(const FName& COMPONENT_NAME, const EControllerHand& SOURCE);
 
-	UFUNCTION()
 	void InitializeFactory();
-
-	UFUNCTION()
 	void InitializeWeapon();
 
-	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	//void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	FName GetPropertyName(FPropertyChangedEvent& PropertyChangedEvent);
 	bool IsWeaponFactoryClassProperty(const FName& PROPERTY_NAME) const;
 
@@ -78,5 +75,11 @@ private:
 	
 	UFUNCTION()
 	void FireRight();
+
+	UFUNCTION()
+	void StopFireLeft();
+	
+	UFUNCTION()
+	void StopFireRight();
 
 };

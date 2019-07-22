@@ -16,13 +16,14 @@ DEFINE_LOG_CATEGORY(PlayerPawnLog);
 
 APlayerPawn::APlayerPawn(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	WARNING("Construction");
 	weaponFactoryClass = UDefaultWeaponFactory::StaticClass();
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 	InitializeBaseComponents();
 	InitializeFactory();
 	InitializeWeapon();
+
+	LOG("Constructed");
 }
 
 void APlayerPawn::InitializeBaseComponents()
@@ -93,20 +94,19 @@ void APlayerPawn::InitializeWeapon()
 	rightWeapon = Cast<UWeapon>(CreateComponent("RightWeapon", weaponFactory->GetPistolClass(), rightController));
 }
 
-void APlayerPawn::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	// TODO
-	//const FName PROPERTY_NAME = GetPropertyName(PropertyChangedEvent);
-	//if (IsWeaponFactoryClassProperty(PROPERTY_NAME))
-	//{
-	//	CheckFactoryClass();
-	//	ChangeFactory();
-	//	ChangeWeapon();
-	//}
-	//LOG("Property changed.");
-}
+// TODO
+//void APlayerPawn::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+//{
+//	Super::PostEditChangeProperty(PropertyChangedEvent);
+//	const FName PROPERTY_NAME = GetPropertyName(PropertyChangedEvent);
+//	if (IsWeaponFactoryClassProperty(PROPERTY_NAME))
+//	{
+//		CheckFactoryClass();
+//		ChangeFactory();
+//		ChangeWeapon();
+//	}
+//	LOG("Property changed.");
+//}
 
 FName APlayerPawn::GetPropertyName(FPropertyChangedEvent& PropertyChangedEvent)
 {
@@ -141,13 +141,11 @@ void APlayerPawn::ChangeWeapon()
 	if (IsValid(leftWeapon))
 	{
 		leftWeapon->DestroyComponent();
-		WARNING("Left Destroyed");
 	}
 
 	if (IsValid(rightWeapon))
 	{
 		rightWeapon->DestroyComponent();
-		WARNING("Right Destroyed");
 	}
 
 	leftWeapon = Cast<UWeapon>(CreateComponentAtRuntime(FName("LeftWeapon"), weaponFactory->GetPistolClass(), leftController));
@@ -162,6 +160,8 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("FireLeft", EInputEvent::IE_Pressed, this, &APlayerPawn::FireLeft);
 	PlayerInputComponent->BindAction("FireRight", EInputEvent::IE_Pressed, this, &APlayerPawn::FireRight);
+	PlayerInputComponent->BindAction("FireLeft", EInputEvent::IE_Released, this, &APlayerPawn::StopFireLeft);
+	PlayerInputComponent->BindAction("FireRight", EInputEvent::IE_Released, this, &APlayerPawn::StopFireRight);
 }
 
 void APlayerPawn::BeginPlay()
@@ -193,5 +193,21 @@ void APlayerPawn::FireRight()
 	else
 	{
 		WARNING("rightWeapon is nullptr");
+	}
+}
+
+void APlayerPawn::StopFireLeft()
+{
+	if (leftWeapon != nullptr)
+	{
+		leftWeapon->OnStopFire();
+	}
+}
+
+void APlayerPawn::StopFireRight()
+{
+	if (rightWeapon != nullptr)
+	{
+		rightWeapon->OnStopFire();
 	}
 }

@@ -4,6 +4,7 @@
 #include "Pistol.h"
 #include "ConstructorHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "TimerManager.h"
 
 #define LOG(Message) UE_LOG(WeaponLog, Log, TEXT("Pistol: %s"), TEXT(Message))
 #define WARNING(Message) UE_LOG(WeaponLog, Warning, TEXT("Pistol: %s"), TEXT(Message))
@@ -11,7 +12,7 @@
 
 UPistol::UPistol() : Super()
 {
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> staticMeshAsset(TEXT("StaticMesh'/Game/Pistol_StaticMesh.Pistol_StaticMesh'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> staticMeshAsset(TEXT("StaticMesh'/Game/Meshes/SM_Pistol.SM_Pistol'"));
 
 	if (staticMeshAsset.Succeeded())
 	{
@@ -21,15 +22,14 @@ UPistol::UPistol() : Super()
 		ERROR("Couldn't load static mesh");
 	}
 
-	UE_LOG(WeaponLog, Warning, TEXT("Pistol: %s"), *UKismetSystemLibrary::GetDisplayName(bulletClass.Get()));
+	fireRate = 0.075f;
 }
 
 void UPistol::OnFire_Implementation()
 {
 	if (bulletClass.Get() == nullptr) return;
 
-	SpawnBullet();
-	LOG("Fire");
+	GetWorld()->GetTimerManager().SetTimer(fireTimer, this, &UPistol::SpawnBullet, fireRate, true, false);
 }
 
 void UPistol::SpawnBullet()
@@ -43,5 +43,6 @@ void UPistol::SpawnBullet()
 
 void UPistol::OnStopFire_Implementation()
 {
+	GetWorld()->GetTimerManager().ClearTimer(fireTimer);
 	LOG("Stop fire");
 }

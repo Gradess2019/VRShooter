@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapon.h"
+#include "Bullet.h"
 #include "Pistol.generated.h"
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -14,12 +15,20 @@ class SHOOTER_API UPistol : public UWeapon
 public:
 	UPistol();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<class ABullet> bulletClass;
-
 	void OnFire_Implementation() override;
 	void OnStopFire_Implementation() override;
 
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon settings")
+	TSubclassOf<ABullet> bulletClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon settings")
+	float fireRate;
+
 	void SpawnBullet();
 
+private:
+
+	FTimerHandle fireTimer;
 };

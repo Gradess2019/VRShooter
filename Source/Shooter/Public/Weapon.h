@@ -18,9 +18,10 @@ class SHOOTER_API UWeapon : public UStaticMeshComponent
 
 public:
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Weapon settings", meta = (KeyWords = "On Fire Weapon Shoot Shot"))
 	void OnFire();
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Weapon settings", meta = (KeyWords = "On Fire Weapon Shoot Shot Stop"))
 	void OnStopFire();
+
 };
